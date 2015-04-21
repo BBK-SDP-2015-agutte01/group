@@ -12,7 +12,7 @@ class Image(val width: Int, val height: Int) {
   }
 
   def print(file: String) = {
-    val f = new File(file)
-    ImageIO.write(im, "png", f)
+    val outFile = new File(file)
+    ImageIO.write(im, "png", outFile)
   }
 }
