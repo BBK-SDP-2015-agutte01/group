@@ -1,3 +1,5 @@
+import akka.actor.{Props, ActorSystem}
+
 object Trace {
 
   val AntiAliasingFactor = 4
@@ -33,6 +35,10 @@ object Trace {
     Coordinator.init(image, outfile)
 
     // TODO: Start the Coordinator actor.
+    val system = ActorSystem("appropriate")
+    val coordinatorActor = system.actorOf(Props[CoordinatorActor], "coordinatorActor")
+
+    coordinatorActor ! Start
 
     scene.traceImage(width, height)
 

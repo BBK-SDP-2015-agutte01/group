@@ -1,3 +1,5 @@
+import akka.actor.{Actor, Props}
+
 // TODO
 //
 // Make this an actor and write a message handler for at least the
@@ -26,3 +28,14 @@ object Coordinator {
     image.print(outfile)
   }
 }
+
+class CoordinatorActor extends Actor {
+  def receive = {
+    case Start => {
+      val test = context.actorOf(Props[Calculator], "cal")
+      test ! Calculate(34)
+    }
+  }
+}
+case class Start()
+case class Calculate(row: Int)
