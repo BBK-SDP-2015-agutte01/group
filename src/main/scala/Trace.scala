@@ -36,7 +36,7 @@ object Trace {
 
     // TODO: Start the Coordinator actor.
     val system = ActorSystem("appropriate")
-    val coordinatorActor = system.actorOf(Props[CoordinatorActor], "coordinatorActor")
+    val coordinatorActor = system.actorOf(Props[Coordinator], "coordinatorActor")
 
     coordinatorActor ! Start
 

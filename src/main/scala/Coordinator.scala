@@ -1,10 +1,6 @@
 import akka.actor.{Actor, Props}
 
-// TODO
-//
-// Make this an actor and write a message handler for at least the
-// set method.
-//
+
 object Coordinator {
   def init(im: Image, of: String) = {
     image = im
@@ -17,7 +13,7 @@ object Coordinator {
   var outfile: String = null
   var image: Image = null
 
-  // TODO: make set a message
+
   def set(x: Int, y: Int, c: Colour) = {
     image(x, y) = c
     waiting -= 1
@@ -29,13 +25,17 @@ object Coordinator {
   }
 }
 
-class CoordinatorActor extends Actor {
+class Coordinator extends Actor {
   def receive = {
     case Start => {
       val test = context.actorOf(Props[Calculator], "cal")
       test ! Calculate(34)
     }
+    case Set(x: Int, y: Int, c: Colour) => {
+      Coordinator.set(x, y, c)
+    }
   }
 }
 case class Start()
 case class Calculate(row: Int)
+case class Set(x: Int, y: Int, c: Colour)
