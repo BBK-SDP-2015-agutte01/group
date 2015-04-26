@@ -35,10 +35,10 @@ object Trace {
     Coordinator.init(image, outfile)
 
     // TODO: Start the Coordinator actor.
-    val system = ActorSystem("appropriate")
-    val coordinatorActor = system.actorOf(Props[CoordinatorActor], "coordinatorActor")
+    val system = ActorSystem("tracerActor")
+    val tracerActor = system.actorOf(Props[Tracer], "tracer")
 
-    coordinatorActor ! Start
+    Coordinator ! TraceMessage
 
     scene.traceImage(width, height)
 
