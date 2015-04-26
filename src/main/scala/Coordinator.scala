@@ -32,7 +32,7 @@ object Coordinator extends Actor {
 
   def receive: Receive = {
     case TraceMessage(x,y,c) => set(x, y, c)
-    case _=> ??? //Exception
+    case _=> println("Cannot understand message.")
   }
 }
 
