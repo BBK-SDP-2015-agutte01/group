@@ -5,3 +5,5 @@
 *.iml
 target
 .ipr
+.floo
+.flooignore

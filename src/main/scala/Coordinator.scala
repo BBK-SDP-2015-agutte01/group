@@ -1,11 +1,13 @@
-import akka.actor.{Actor, Props}
+import akka.actor.Actor
 
 // TODO
 //
 // Make this an actor and write a message handler for at least the
 // set method.
 //
-object Coordinator {
+case class TraceMessage(x: Int, y: Int, c: Colour)
+
+object Coordinator extends Actor {
   def init(im: Image, of: String) = {
     image = im
     outfile = of
@@ -27,15 +29,19 @@ object Coordinator {
     assert(waiting == 0)
     image.print(outfile)
   }
+
+  def receive: Receive = {
+    case TraceMessage(x,y,c) => set(x, y, c)
+  }
 }
 
 class CoordinatorActor extends Actor {
   def receive = {
-    case Start => {
-      val test = context.actorOf(Props[Calculator], "cal")
-      test ! Calculate(34)
+    case trace => {
+      //val coordinator = context.actorOf(Props[Calculator], "cal")
+      //coordinator ! Calculate(34)
     }
   }
 }
-case class Start()
-case class Calculate(row: Int)
+//case class Start()
+//case class Calculate(row: Int)
