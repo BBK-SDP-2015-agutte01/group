@@ -22,10 +22,6 @@ object Trace {
 
     render(scene, outfile, Width, Height)
 
-    println("rays cast " + rayCount)
-    println("rays hit " + hitCount)
-    println("light " + lightCount)
-    println("dark " + darkCount)
   }
 
   def render(scene: Scene, outfile: String, width: Int, height: Int) = {
@@ -38,14 +34,25 @@ object Trace {
     val system = ActorSystem("appropriate")
     val coordinatorActor = system.actorOf(Props[Coordinator], "coordinatorActor")
 
-    coordinatorActor ! Start
+    coordinatorActor ! Start(scene, width, height)
 
-    scene.traceImage(width, height)
+    while (!Coordinator.finished) {
+      Thread.sleep(1000)
+    }
+
+    println("rays cast " + rayCount)
+    println("rays hit " + hitCount)
+    println("light " + lightCount)
+    println("dark " + darkCount)
+
+    system.shutdown()
+
+    //    scene.traceImage(width, height)
 
     // TODO:
     // This one is tricky--we can't simply send a message here to print
     // the image, since the actors started by traceImage haven't necessarily
     // finished yet.  Maybe print should be called elsewhere?
-    Coordinator.print
+//    Coordinator.print
   }
 }

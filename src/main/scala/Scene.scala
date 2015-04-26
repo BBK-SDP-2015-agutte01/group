@@ -50,7 +50,10 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
   val angle = 90f // viewing angle
   //val angle = 180f // fisheye
 
-  def traceImage(width: Int, height: Int) {
+  /** The 2 for-loops from the original code base have been deleted.
+    * This method now returns a Colour
+    */
+  def traceImage(width: Int, height: Int) = {
 
     val frustum = (.5 * angle * math.Pi / 180).toFloat
 
@@ -66,35 +69,29 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
     // pixels.  Each actor should send the Coordinator messages to set the
     // color of a pixel.  The actor need not receive any messages.
 
-    for (y <- 0 until height) {
-      for (x <- 0 until width) {
+    var colour = Colour.black
 
-        // This loop body can be sequential.
-        var colour = Colour.black
+    for (dx <- 0 until ss) {
+      for (dy <- 0 until ss) {
 
-        for (dx <- 0 until ss) {
-          for (dy <- 0 until ss) {
+        // Create a vector to the pixel on the view plane formed when
+        // the eye is at the origin and the normal is the Z-axis.
+        val dir = Vector(
+          (sinf * 2 * ((width + dx.toFloat / ss) / width - .5)).toFloat,
+          (sinf * 2 * (height.toFloat / width) * (.5 - (height + dy.toFloat / ss) / height)).toFloat,
+          cosf.toFloat).normalized
 
-            // Create a vector to the pixel on the view plane formed when
-            // the eye is at the origin and the normal is the Z-axis.
-            val dir = Vector(
-              (sinf * 2 * ((x + dx.toFloat / ss) / width - .5)).toFloat,
-              (sinf * 2 * (height.toFloat / width) * (.5 - (y + dy.toFloat / ss) / height)).toFloat,
-              cosf.toFloat).normalized
-
-            val c = trace(Ray(eye, dir)) / (ss * ss)
-            colour += c
-          }
-        }
-
-        if (Vector(colour.r, colour.g, colour.b).norm < 1)
-          Trace.darkCount += 1
-        if (Vector(colour.r, colour.g, colour.b).norm > 1)
-          Trace.lightCount += 1
-
-        Coordinator.set(x, y, colour)
+        val c = trace(Ray(eye, dir)) / (ss * ss)
+        colour += c
       }
     }
+
+    if (Vector(colour.r, colour.g, colour.b).norm < 1)
+      Trace.darkCount += 1
+    if (Vector(colour.r, colour.g, colour.b).norm > 1)
+      Trace.lightCount += 1
+
+    colour
   }
 
   def shadow(ray: Ray, l: Light): Boolean = {
@@ -120,8 +117,8 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
       // diffuse light
       val diffuse = o.colour * (N dot toLight.dir)
 
-      println("ray " + ray)
-      println("diffuse " + diffuse)
+//      println("ray " + ray)
+//      println("diffuse " + diffuse)
 
       // specular light
       val R = reflected(-toLight.dir, N)
@@ -144,11 +141,11 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
       else
         Colour.black
 
-      println("specular " + specular)
+//      println("specular " + specular)
 
       val color = diffuse + specular
 
-      println("color " + color + " 0x" + color.rgb.toHexString)
+//      println("color " + color + " 0x" + color.rgb.toHexString)
 
       color
     }
