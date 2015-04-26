@@ -32,16 +32,17 @@ object Coordinator extends Actor {
 
   def receive: Receive = {
     case TraceMessage(x,y,c) => set(x, y, c)
+    case _=> ??? //Exception
   }
 }
 
-class CoordinatorActor extends Actor {
-  def receive = {
-    case trace => {
+//class CoordinatorActor extends Actor {
+//  def receive = {
+//    case trace => {
       //val coordinator = context.actorOf(Props[Calculator], "cal")
       //coordinator ! Calculate(34)
-    }
-  }
-}
+//    }
+//  }
+//}
 //case class Start()
 //case class Calculate(row: Int)
