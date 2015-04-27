@@ -29,13 +29,14 @@ object Coordinator extends Actor {
     assert(waiting == 0)
     image.print(outfile)
   }
+}
 
-  def receive: Receive = {
-    case TraceMessage(x,y,c) => set(x, y, c)
+class Coordinator extends Actor {
+  def receive = {
+    case TraceMessage(x,y,c) => Coordinator.set(x, y, c)
     case _=> println("Cannot understand message.")
   }
 }
-
 //class CoordinatorActor extends Actor {
 //  def receive = {
 //    case trace => {
