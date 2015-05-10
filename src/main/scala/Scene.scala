@@ -1,4 +1,4 @@
-import akka.actor.{ActorRef, Props, ActorSystem}
+import akka.actor.ActorRef;
 
 object Scene {
 
@@ -76,10 +76,11 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
 
     (0 until height).par foreach {
       row: Int  =>
-      val system = ActorSystem("tracerActor")
-      val tracerActor = system.actorOf(Props(new Tracer(actorRef,this, height, width)), "tracer")
+//      val system = ActorSystem("tracerActor")
+//      val tracerActor = system.actorOf(Props(new Tracer(actorRef,this, height, width)), "tracer")
 
-      tracerActor ! row
+//      tracerActor ! row
+        actorRef ! (row, height, width, this)
     }
   }
 

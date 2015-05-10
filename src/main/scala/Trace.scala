@@ -1,4 +1,4 @@
-import akka.actor.{Props, ActorSystem}
+import akka.actor.{ActorSystem, Props}
 
 object Trace {
 
@@ -22,23 +22,21 @@ object Trace {
 
     render(scene, outfile, Width, Height)
 
+    println("rays cast " + rayCount)
+    println("rays hit " + hitCount)
+    println("light " + lightCount)
+    println("dark " + darkCount)
   }
 
   def render(scene: Scene, outfile: String, width: Int, height: Int) = {
     val image = new Image(width, height)
 
     // Init the coordinator -- must be done before starting it.
-    Coordinator.init(image, outfile)
+//    Coordinator.init(image, outfile)
 
     // TODO: Start the Coordinator actor.
     val system = ActorSystem("coordinatorActor")
-    val coordinatorActor = system.actorOf(Props[Coordinator], "coordinator")
-
-    println("rays cast " + rayCount)
-    println("rays hit " + hitCount)
-    println("light " + lightCount)
-
-    println("dark " + darkCount)
+    val coordinatorActor = system.actorOf(Props(new Coordinator(image, outfile)), "coordinator")
 
     scene.init(coordinatorActor)
     scene.traceImage(width, height)
