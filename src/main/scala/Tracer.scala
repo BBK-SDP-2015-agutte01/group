@@ -1,9 +1,9 @@
-import akka.actor.Actor
+import akka.actor.{ActorRef, Actor}
 
 //Tracer Actor that carries out the computation for the pixels per row.
 //Tracer Actor will send message back to the coordinator.
 
-class Tracer(scene: Scene, height: Int, width: Int) extends Actor {
+class Tracer(actorRef: ActorRef, scene: Scene, height: Int, width: Int) extends Actor {
   val eye = Vector.origin
   val angle = 90f // viewing angle
   val frustum = (.5 * angle * math.Pi / 180).toFloat
@@ -40,7 +40,7 @@ class Tracer(scene: Scene, height: Int, width: Int) extends Actor {
         if (Vector(colour.r, colour.g, colour.b).norm > 1)
           Trace.lightCount += 1
 
-        Coordinator.set(x, y, colour)
+        actorRef ! (x, y, colour)
       }
     }
   }

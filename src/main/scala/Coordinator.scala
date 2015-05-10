@@ -29,17 +29,21 @@ object Coordinator {
   }
 
   def print = {
-    if (waiting == 0) {
-      image.print(outfile)
-      finished = true
-    }
+    image.print(outfile)
+    finished = true
   }
 }
 
 class Coordinator extends Actor {
 
   def receive = {
-    case (x: Int, y: Int, c: Colour) => Coordinator.set(x, y, c)
+    case (x: Int, y: Int, c: Colour) => {
+      Coordinator.set(x, y, c)
+      if (Coordinator.waiting <= 0) {
+        Coordinator.print
+        context.stop(self)
+      }
+    }
     case _ => println("Cannot understand message.")
   }
 }

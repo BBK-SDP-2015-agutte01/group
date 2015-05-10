@@ -31,15 +31,16 @@ object Trace {
     Coordinator.init(image, outfile)
 
     // TODO: Start the Coordinator actor.
+    val system = ActorSystem("coordinatorActor")
+    val coordinatorActor = system.actorOf(Props[Coordinator], "coordinator")
 
     println("rays cast " + rayCount)
     println("rays hit " + hitCount)
     println("light " + lightCount)
+
     println("dark " + darkCount)
 
-    val system = ActorSystem("coordinatorActor")
-    val coordinatorActor = system.actorOf(Props[Coordinator], "coordinator")
-
+    scene.init(coordinatorActor)
     scene.traceImage(width, height)
 
     // TODO:
@@ -47,6 +48,5 @@ object Trace {
     // the image, since the actors started by traceImage haven't necessarily
     // finished yet.  Maybe print should be called elsewhere?
 
-    Coordinator.print
   }
 }

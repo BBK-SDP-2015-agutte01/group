@@ -1,4 +1,4 @@
-import akka.actor.{Props, ActorSystem}
+import akka.actor.{ActorRef, Props, ActorSystem}
 
 object Scene {
 
@@ -48,6 +48,11 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
 
   val ambient = .2f
   val background = Colour.black
+  var actorRef: ActorRef = null
+
+  def init(actorReference: ActorRef) = {
+    actorRef = actorReference
+  }
 
   //val angle = 180f // fisheye
 
@@ -72,7 +77,7 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
     (0 until height).par foreach {
       row: Int  =>
       val system = ActorSystem("tracerActor")
-      val tracerActor = system.actorOf(Props(new Tracer(this, height, width)), "tracer")
+      val tracerActor = system.actorOf(Props(new Tracer(actorRef,this, height, width)), "tracer")
 
       tracerActor ! row
     }
