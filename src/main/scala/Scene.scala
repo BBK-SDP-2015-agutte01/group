@@ -65,11 +65,16 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
     // pixels.  Each actor should send the Coordinator messages to set the
     // color of a pixel.  The actor need not receive any messages.
 
-    for (y <- 0 until height) {
+    //This is lazily instantiated and the .par allows parallel processing of the
+    //rows. Meaning if there are 4 processors available then 4 tracerActors will
+    //send the incrementors(row) value to tracer.
+
+    (0 until height).par foreach {
+      row: Int  =>
       val system = ActorSystem("tracerActor")
       val tracerActor = system.actorOf(Props(new Tracer(this, height, width)), "tracer")
 
-      tracerActor ! y
+      tracerActor ! row
     }
   }
 

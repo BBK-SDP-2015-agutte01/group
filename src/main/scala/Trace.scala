@@ -32,7 +32,6 @@ object Trace {
 
     // TODO: Start the Coordinator actor.
 
-
     println("rays cast " + rayCount)
     println("rays hit " + hitCount)
     println("light " + lightCount)
@@ -41,12 +40,13 @@ object Trace {
     val system = ActorSystem("coordinatorActor")
     val coordinatorActor = system.actorOf(Props[Coordinator], "coordinator")
 
-    //    scene.traceImage(width, height)
+    scene.traceImage(width, height)
 
     // TODO:
     // This one is tricky--we can't simply send a message here to print
     // the image, since the actors started by traceImage haven't necessarily
     // finished yet.  Maybe print should be called elsewhere?
-//    Coordinator.print
+
+    Coordinator.print
   }
 }
