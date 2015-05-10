@@ -5,9 +5,8 @@ import akka.actor.Actor
 // Make this an actor and write a message handler for at least the
 // set method.
 //
-case class TraceMessage(x: Int, y: Int, c: Colour)
 
-object Coordinator extends Actor {
+object Coordinator {
   def init(im: Image, of: String) = {
     image = im
     outfile = of
@@ -33,15 +32,16 @@ object Coordinator extends Actor {
 
 class Coordinator extends Actor {
   def receive = {
-    case TraceMessage(x,y,c) => Coordinator.set(x, y, c)
-    case _=> println("Cannot understand message.")
+    case (x: Int, y: Int, c: Colour) => Coordinator.set(x, y, c)
+    case _ => println("Cannot understand message.")
   }
 }
+
 //class CoordinatorActor extends Actor {
 //  def receive = {
 //    case trace => {
-      //val coordinator = context.actorOf(Props[Calculator], "cal")
-      //coordinator ! Calculate(34)
+//val coordinator = context.actorOf(Props[Calculator], "cal")
+//coordinator ! Calculate(34)
 //    }
 //  }
 //}
