@@ -14,7 +14,6 @@ class Tracer(scene: Scene, height: Int, width: Int) extends Actor {
   def receive = {
     // y being the variable in the for loop from scene.
     case y: Int => {
-//      println("TRACER COMPUTE")
       for (x <- 0 until width) {
 
         // This loop body can be sequential.

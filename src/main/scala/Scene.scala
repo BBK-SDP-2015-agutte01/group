@@ -50,6 +50,7 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
   val background = Colour.black
   var actorRef: ActorRef = null
 
+  //Setter injection for actorRef from Trace.
   def init(actorReference: ActorRef) = {
     actorRef = actorReference
   }
@@ -71,15 +72,11 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
     // color of a pixel.  The actor need not receive any messages.
 
     //This is lazily instantiated and the .par allows parallel processing of the
-    //rows. Meaning if there are 4 processors available then 4 tracerActors will
-    //send the incrementors(row) value to tracer.
+    //rows. Meaning if there are 4 processors available then 4 (row, height, width, this)
+    //will send messages to the coordinator for furthur processing.
 
     (0 until height).par foreach {
       row: Int  =>
-//      val system = ActorSystem("tracerActor")
-//      val tracerActor = system.actorOf(Props(new Tracer(actorRef,this, height, width)), "tracer")
-
-//      tracerActor ! row
         actorRef ! (row, height, width, this)
     }
   }

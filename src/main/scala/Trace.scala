@@ -36,9 +36,13 @@ object Trace {
 
     // TODO: Start the Coordinator actor.
     val system = ActorSystem("coordinatorActor")
+
+    //Coordinator modified as a class to be able to be instantiated.
     val coordinatorActor = system.actorOf(Props(new Coordinator(image, outfile)), "coordinator")
 
+    //Actor reference passed to scene.
     scene.init(coordinatorActor)
+
     scene.traceImage(width, height)
 
     // TODO:
@@ -46,5 +50,6 @@ object Trace {
     // the image, since the actors started by traceImage haven't necessarily
     // finished yet.  Maybe print should be called elsewhere?
 
+    //print moved to coordinator.
   }
 }

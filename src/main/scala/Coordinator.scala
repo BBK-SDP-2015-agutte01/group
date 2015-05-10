@@ -6,6 +6,8 @@ import akka.actor.{Actor, Props}
 // Make this an actor and write a message handler for at least the
 // set method.
 //
+
+//Coordinator modified to spawn Tracers, so the scene sends message to coordinator.
 class Coordinator(val image: Image, val outfile: String) extends Actor {
   var waiting = image.width * image.height
 
