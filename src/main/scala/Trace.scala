@@ -31,21 +31,15 @@ object Trace {
     Coordinator.init(image, outfile)
 
     // TODO: Start the Coordinator actor.
-    val system = ActorSystem("appropriate")
-    val coordinatorActor = system.actorOf(Props[Coordinator], "coordinatorActor")
 
-    coordinatorActor ! Start(scene, width, height)
-
-    while (!Coordinator.finished) {
-      Thread.sleep(1000)
-    }
 
     println("rays cast " + rayCount)
     println("rays hit " + hitCount)
     println("light " + lightCount)
     println("dark " + darkCount)
 
-    system.shutdown()
+    val system = ActorSystem("coordinatorActor")
+    val coordinatorActor = system.actorOf(Props[Coordinator], "coordinator")
 
     //    scene.traceImage(width, height)
 

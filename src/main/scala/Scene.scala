@@ -1,3 +1,5 @@
+import akka.actor.{Props, ActorSystem}
+
 object Scene {
 
   import java.io.{FileReader, LineNumberReader}
@@ -9,6 +11,7 @@ object Scene {
     val (objects, lights) = readLines(in, Nil, Nil)
     new Scene(objects, lights)
   }
+
 
   @tailrec
   private def readLines(in: LineNumberReader, objects: List[Shape], lights: List[Light]): (List[Shape], List[Light]) = {
@@ -46,8 +49,6 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
   val ambient = .2f
   val background = Colour.black
 
-  val eye = Vector.origin
-  val angle = 90f // viewing angle
   //val angle = 180f // fisheye
 
   /** The 2 for-loops from the original code base have been deleted.
@@ -55,43 +56,21 @@ class Scene private(val objects: List[Shape], val lights: List[Light]) {
     */
   def traceImage(width: Int, height: Int) = {
 
-    val frustum = (.5 * angle * math.Pi / 180).toFloat
-
-    val cosf = math.cos(frustum)
-    val sinf = math.sin(frustum)
-
     // Anti-aliasing parameter -- divide each pixel into sub-pixels and
     // average the results to get smoother images.
-    val ss = Trace.AntiAliasingFactor
+
 
     // TODO:
     // Create a parallel version of this loop, creating one actor per pixel or per row of
     // pixels.  Each actor should send the Coordinator messages to set the
     // color of a pixel.  The actor need not receive any messages.
 
-    var colour = Colour.black
+    for (y <- 0 until height) {
+      val system = ActorSystem("tracerActor")
+      val tracerActor = system.actorOf(Props(new Tracer(this, height, width)), "tracer")
 
-    for (dx <- 0 until ss) {
-      for (dy <- 0 until ss) {
-
-        // Create a vector to the pixel on the view plane formed when
-        // the eye is at the origin and the normal is the Z-axis.
-        val dir = Vector(
-          (sinf * 2 * ((width + dx.toFloat / ss) / width - .5)).toFloat,
-          (sinf * 2 * (height.toFloat / width) * (.5 - (height + dy.toFloat / ss) / height)).toFloat,
-          cosf.toFloat).normalized
-
-        val c = trace(Ray(eye, dir)) / (ss * ss)
-        colour += c
-      }
+      tracerActor ! y
     }
-
-    if (Vector(colour.r, colour.g, colour.b).norm < 1)
-      Trace.darkCount += 1
-    if (Vector(colour.r, colour.g, colour.b).norm > 1)
-      Trace.lightCount += 1
-
-    colour
   }
 
   def shadow(ray: Ray, l: Light): Boolean = {

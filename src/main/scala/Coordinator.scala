@@ -1,4 +1,11 @@
-import akka.actor.{ActorRef, Props, Actor}
+
+import akka.actor.Actor
+
+// TODO
+//
+// Make this an actor and write a message handler for at least the
+// set method.
+//
 
 object Coordinator {
   // Boolean flag for shutting down ActorSystem
@@ -32,30 +39,8 @@ object Coordinator {
 class Coordinator extends Actor {
 
   def receive = {
-
-    case Start(scene, width, height) => {
-
-      val actorArray = new Array[ActorRef](height)
-
-      for (a <- actorArray.indices) {
-          actorArray(a) = context.actorOf(Props[Calculator], "row" + a)
-      }
-
-      for (a <- actorArray.indices) {
-        actorArray(a) ! Calculate(scene, width, a)
-      }
-    }
-
-    case Set(results) =>
-      
-      for (r <- results) {
-        // r is a tuple of (Int, Int, Colour)
-        Coordinator.set(r._1, r._2, r._3)
-      }
-      Coordinator.print
+    case (x: Int, y: Int, c: Colour) => Coordinator.set(x, y, c)
+    case _ => println("Cannot understand message.")
   }
 }
 
-case class Start(scene: Scene, width: Int, height: Int)
-case class Calculate(scene: Scene, width: Int, row: Int)
-case class Set(results: List[(Int, Int, Colour)])
